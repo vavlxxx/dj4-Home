@@ -46,6 +46,14 @@ class Products(models.Model):
         verbose_name="Категория",
     )
 
+    def display_id(self) -> str:
+        return f"{self.id:07}"  # type: ignore
+
+    def sell_price(self) -> Decimal:
+        if self.discount:
+            return round(self.price - (self.price * self.discount / 100), 2)
+        return self.price
+
     def __str__(self):
         return f"{self.name} ({self.quantity})"
 
