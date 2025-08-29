@@ -19,13 +19,13 @@ def catalog(request: HttpRequest, category_slug: str | None = None) -> HttpRespo
         goods = query_search(q)
     else:
         goods = Products.objects.filter(category__slug=category_slug)
+        goods = get_list_or_404(goods)
 
     if on_sale:
-        goods = goods.filter(discount__gt=0)
+        goods = goods.filter(discount__gt=0)  # type: ignore
     if order_by and order_by != "default":
-        goods = goods.order_by(order_by)
+        goods = goods.order_by(order_by)  # type: ignore
 
-    goods = get_list_or_404(goods)
     paginator = Paginator(goods, settings.ITEMS_PER_PAGE)
     paged_goods = paginator.get_page(page)
 
