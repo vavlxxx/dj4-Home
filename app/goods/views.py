@@ -1,17 +1,49 @@
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_list_or_404, render
+from django.core.paginator import Paginator
 
+from goods.utils import query_search
 from goods.models import Products
+from config import settings
 
 
-def catalog(request: HttpRequest) -> HttpResponse:
-    goods = Products.objects.all()
+def catalog(request: HttpRequest, category_slug: str | None = None) -> HttpResponse:
+    page = int(request.GET.get("page", 1))
+    order_by = request.GET.get("order_by", None)
+    on_sale = request.GET.get("on_sale", None)
+    q = request.GET.get("q", None)
+
+    if category_slug and category_slug == "all":
+        goods = Products.objects.all()
+    elif q:
+        goods = query_search(q)
+    else:
+        goods = Products.objects.filter(category__slug=category_slug)
+
+    if on_sale:
+        goods = goods.filter(discount__gt=0)
+    if order_by and order_by != "default":
+        goods = goods.order_by(order_by)
+
+    goods = get_list_or_404(goods)
+    paginator = Paginator(goods, settings.ITEMS_PER_PAGE)
+    paged_goods = paginator.get_page(page)
+
     context = {
         "title": "Home | Каталог",
-        "goods": goods,
+        "slug_url": category_slug,
+        "goods": paged_goods,
     }
     return render(request=request, template_name="goods/catalog.html", context=context)
 
 
-def product(request: HttpRequest) -> HttpResponse:
-    return render(request=request, template_name="goods/product.html")
+def product(request: HttpRequest, product_slug: str) -> HttpResponse:
+
+    product = Products.objects.get(slug=product_slug)
+
+    context = {
+        "title": f"Home | {product.name}",
+        "product": product,
+    }
+
+    return render(request=request, template_name="goods/product.html", context=context)

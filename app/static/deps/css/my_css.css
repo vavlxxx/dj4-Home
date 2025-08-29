@@ -36,3 +36,7 @@ body {
   border-radius: 15px;
   font-size: 0.7rem;
 }
+
+.main-section{
+  min-height: 100vh;
+}
