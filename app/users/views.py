@@ -1,9 +1,11 @@
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Prefetch
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
+from orders.models import Order, OrderItem
 from carts.models import Cart
 from users.forms import ProfileForm, UserLoginForm, UserRegistrationForm
 
@@ -22,6 +24,9 @@ def login(request):
                 messages.success(request, f"{username}, Вы вошли в аккаунт")
 
                 if session_key:
+                    forgot_carts = Cart.objects.filter(user=user)
+                    if forgot_carts.exists():
+                        forgot_carts.delete()
                     Cart.objects.filter(session_key=session_key).update(user=user)
 
                 redirect_page = request.POST.get("next", None)
@@ -75,7 +80,17 @@ def profile(request):
     else:
         form = ProfileForm(instance=request.user)
 
-    context = {"title": "Home | Кабинет", "form": form}
+    orders = (
+        Order.objects.filter(user=request.user)
+        .prefetch_related(
+            Prefetch(
+                "orderitem_set",
+                queryset=OrderItem.objects.select_related("product"),
+            )
+        )
+        .order_by("-id")
+    )
+    context = {"title": "Home | Кабинет", "form": form, "orders": orders}
     return render(request, "users/profile.html", context)
 
 

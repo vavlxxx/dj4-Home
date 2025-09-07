@@ -65,3 +65,4 @@ class Products(models.Model):
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
         db_table = "products"
+        ordering = ("id",)

@@ -33,6 +33,7 @@ class Cart(models.Model):
     )
 
     class Meta:
+        ordering = ("id",)
         db_table = "cart"
         verbose_name = "Корзина"
         verbose_name_plural = "Корзина"

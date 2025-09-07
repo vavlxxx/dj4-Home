@@ -44,3 +44,10 @@
         <h4 class="float-left"><strong>{{ carts.total_price }} $</strong></h4>
     </div>
 </div>
+
+
+{% if carts and not is_order_page %}
+    <a class="btn btn-dark" href="{% url 'orders:create_order' %}">
+        Оформить заказ
+    </a>
+{% endif %}
