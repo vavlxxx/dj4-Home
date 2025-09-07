@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -68,3 +68,8 @@ def logout(request):
     messages.success(request, f"{request.user.username}, Вы вышли из аккаунта")
     auth.logout(request)
     return redirect(reverse("main:index"))
+
+
+@login_required
+def cart(request):
+    return render(request=request, template_name="users/users_cart.html")

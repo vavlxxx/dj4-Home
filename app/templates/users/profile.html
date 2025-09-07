@@ -16,11 +16,11 @@
                                 {% if user.image %}
                                     <img src="{{ user.image.url }}"
                                         alt="Аватар пользователя" class="img-fluid rounded-circle"
-                                        style="max-width: 150px;">
+                                        style="max-width: 150px;height: 150px;">
                                 {% else %}
                                     <img src="{% static "deps/images/baseavatar.jpg" %}"
                                         alt="Аватар пользователя" class="img-fluid rounded-circle"
-                                        style="max-width: 150px;">
+                                        style="max-width: 150px;height: 150px;">
                                 {% endif %}
                                 <input type="file" class="form-control mt-3" id="id_image"
                                     name='image'
@@ -84,6 +84,7 @@
                     <h3 class="text-center mb-4">Корзина</h3>
                     <div class="container" id="cart-items-container">
                         <!-- Разметка корзины -->
+                        {% include "carts/includes/included_cart.html" %}
                         <!-- Закончилась разметка корзины -->
                     </div>
                     <a class="btn btn-dark" href="../orders/create_order.html">
