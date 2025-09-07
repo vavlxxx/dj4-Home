@@ -17,9 +17,11 @@ def catalog(request: HttpRequest, category_slug: str | None = None) -> HttpRespo
         goods = Products.objects.all()
     elif q:
         goods = query_search(q)
-    else:
+    elif category_slug:
         goods = Products.objects.filter(category__slug=category_slug)
         goods = get_list_or_404(goods)
+    else:
+        goods = Products.objects.all()
 
     if on_sale:
         goods = goods.filter(discount__gt=0)  # type: ignore
