@@ -1,7 +1,4 @@
-from django.http import HttpRequest, HttpResponse
 from django.http import Http404
-from django.shortcuts import render
-from django.core.paginator import Paginator
 from django.views.generic import DetailView, ListView
 
 from goods.utils import query_search
@@ -20,7 +17,7 @@ class CatalogView(ListView):
 
     def get_queryset(self):
         category_slug = self.kwargs.get(self.slug_url_kwarg)
-        page = int(self.request.GET.get("page", 1))
+        # page = int(self.request.GET.get("page", 1))
         order_by = self.request.GET.get("order_by", None)
         on_sale = self.request.GET.get("on_sale", None)
         q = self.request.GET.get("q", None)
